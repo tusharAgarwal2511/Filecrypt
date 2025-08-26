@@ -1,0 +1,30 @@
+# Compiled object files
+*.o
+*.obj
+
+# Compiled executable
+filecrypt
+*.out
+*.exe
+
+# Debug files
+*.dSYM/
+*.d
+
+# Backup and temporary files
+*~
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.code-workspace
+
+# Environment files (if you want to keep .env secret)
+.env
+
+# MacOS files
+.DS_Store
