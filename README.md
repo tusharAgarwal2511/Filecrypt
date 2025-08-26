@@ -48,6 +48,99 @@ Tested on **10,000 files**, each containing **100,000 characters** (total size: 
 
 ---
 
+## 📐 Design  
+
+This section outlines the low-level design of FileCrypt, showcasing the class structure and relationships.
+
+```mermaid
+classDiagram
+    class Main {
+        +printHeader()
+        +showMenu() int
+        +userInput() string
+        +iterateFileSystem() vector~string~
+        +progressBar(current : size_t, total : size_t)
+        +createFileHandler(filePath : string) FileHandler*
+        +createEncryptionTask(stream : fstream, act : Action, filePath : string) EncryptionTask*
+        +executeCryption(taskData : string) int
+        +submitToQueue(task : unique_ptr~EncryptionTask~) bool
+        +printSummary(files : size_t, mbProcessed : double, duration : double, speed : double)
+        .. Notes ..
+        executeCryption() for single-threaded mode.
+        submitToQueue() for multithreaded mode.
+    }
+
+    class Utilities {
+        -RESET : string
+        -RED : string
+        -GREEN : string
+        -YELLOW : string
+        -CYAN : string
+        -BOLD : string
+        +printHeader()
+        +showMenu(options : vector~string~) int
+        +progressBar(current : size_t, total : size_t)
+        +printSummary(files : size_t, mbProcessed : double, duration : double, speed : double)
+        -moveCursorUp(n : int)
+        -getKey() char
+    }
+
+    class FileHandler {
+        -fileStream : fstream
+        +FileHandler(filePath : string)
+        +~FileHandler()
+        +getFileStream() fstream
+        +closeFile()
+    }
+
+    class Cryption {
+        +getEnvKey() string
+        +executeCryption(taskData : string) int
+        -aesEncryptFile(inputFile : string, outputFile : string, keyStr : string) bool
+        -aesDecryptFile(inputFile : string, outputFile : string, keyStr : string) bool
+        .. Notes ..
+        Relies on OpenSSL for AES-256-CBC encryption.
+    }
+
+    class EncryptionTask {
+        -filePath : string
+        -fStream : fstream
+        -action : Action
+        +EncryptionTask(stream : fstream, act : Action, filePath : string)
+        +toString() string
+        +fromString(taskData : string) EncryptionTask
+    }
+
+    class ThreadPool {
+        -queueLock : mutex
+        -threads : vector~thread~
+        +ThreadPool(mode : string)
+        +~ThreadPool()
+        +submitToQueue(task : unique_ptr~EncryptionTask~) bool
+        +waitForCompletion()
+        +executeTasks(taskStr : string)
+        .. Notes ..
+        Supports multithreading with dynamic task queuing.
+        Uses mutex for thread safety.
+    }
+
+    class Action {
+        <<enumeration>>
+        +ENCRYPT
+        +DECRYPT
+    }
+
+    Main --> Utilities : uses
+    Main --> FileHandler : creates *
+    Main --> EncryptionTask : creates *
+    Main --> ThreadPool : creates *
+    ThreadPool --> EncryptionTask : manages *--
+    ThreadPool --> Cryption : uses
+    EncryptionTask --> FileHandler : uses
+    Cryption --> FileHandler : uses
+
+---
+
 ## 📸 Screenshots  
 
 | | |
