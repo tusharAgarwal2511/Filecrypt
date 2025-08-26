@@ -145,7 +145,7 @@ classDiagram
 
 ### Sequence Diagram
 
-This section outlines the low-level design of FileCrypt, showcasing the class structure and relationships.
+The sequence diagram shows how Main coordinates with EncryptionExecutor, EncryptionTask, Cryption, and FileHandler to execute file encryption and decryption operations.
 
 ```mermaid
 sequenceDiagram
