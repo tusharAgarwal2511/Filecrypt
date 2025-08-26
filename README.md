@@ -138,7 +138,8 @@ classDiagram
     ThreadPool --> Cryption : uses
     EncryptionTask --> FileHandler : uses
     Cryption --> FileHandler : uses
-    ```
+    
+```
 
 ---
 
