@@ -50,6 +50,8 @@ Tested on **10,000 files**, each containing **100,000 characters** (total size: 
 
 ## 📐 Design  
 
+### Low Level Design
+
 This section outlines the low-level design of FileCrypt, showcasing the class structure and relationships.
 
 ```mermaid
@@ -138,6 +140,30 @@ classDiagram
     ThreadPool --> Cryption : uses
     EncryptionTask --> FileHandler : uses
     Cryption --> FileHandler : uses
+    
+```
+
+### Sequence Diagram
+
+This section outlines the low-level design of FileCrypt, showcasing the class structure and relationships.
+
+```mermaid
+sequenceDiagram
+    participant M as Main
+    participant T as ThreadPool
+    participant E as EncryptionTask
+    participant C as Cryption
+    participant F as FileHandler
+
+    M->>T: createThreadPool(mode)
+    M->>E: createEncryptionTask(stream, act, filePath)
+    M->>T: submitToQueue(task)
+    T->>E: consume task
+    E->>F: open file in fromString()
+    E->>C: executeCryption(taskData)
+    C->>F: getFileStream()
+    C-->>E: encryption result
+    T-->>M: waitForCompletion()
     
 ```
 
